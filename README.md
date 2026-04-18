@@ -7,7 +7,12 @@ Pipeline de alinhamento de modelo de linguagem usando Direct Preference Optimiza
 ```
 hhh_dataset.jsonl   — 34 pares de preferência (prompt / chosen / rejected)
 train_dpo.py        — pipeline de treinamento DPO
+requirements.txt    — dependências do projeto
 ```
+
+## Modelo
+
+O modelo base utilizado é o `Qwen/Qwen2-0.5B`. O modelo ator recebe um adaptador LoRA (r=16) para atualização de pesos, enquanto o modelo de referência é carregado separadamente e mantido congelado durante todo o treinamento para o cálculo da divergência KL.
 
 ## Dataset
 
@@ -16,9 +21,13 @@ O arquivo `hhh_dataset.jsonl` contém 34 exemplos modelados como interações co
 ## Executar
 
 ```bash
-pip install trl peft transformers datasets torch bitsandbytes
+pip install -r requirements.txt
 python train_dpo.py
 ```
+
+## Validação
+
+Após o treinamento, a validação compara as log-probabilidades da resposta `chosen` e da resposta `rejected` dado um prompt malicioso. O modelo alinhado deve atribuir log-prob maior à resposta segura, comprovando que a distribuição foi ajustada pelo DPO.
 
 ## O parâmetro Beta (β = 0.1)
 
